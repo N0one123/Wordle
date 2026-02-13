@@ -8,6 +8,7 @@ const boardEl = document.getElementById('board');
 const keyboardEl = document.getElementById('keyboard');
 const statusEl = document.getElementById('status');
 const newGameButton = document.getElementById('new-game');
+const externalLinksEl = document.getElementById('external-links');
 
 const keyboardLayout = [
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -19,6 +20,25 @@ const statePriority = { absent: 1, present: 2, correct: 3 };
 
 let state = createNewState();
 let tiles = [];
+
+
+const sounds = {
+  click: new Audio('./click.mp3'),
+  win: new Audio('./win.mp3'),
+  lose: new Audio('./lose.mp3')
+};
+
+function playSound(name) {
+  const sound = sounds[name];
+  if (!sound) {
+    return;
+  }
+
+  sound.currentTime = 0;
+  sound.play().catch(() => {
+    // Ignore autoplay/missing-file issues so gameplay continues.
+  });
+}
 
 function createNewState(answerOverride = getRandomAnswer()) {
   return {
@@ -120,6 +140,7 @@ function handleKeyInput(key) {
       state.guesses[state.currentRow][state.currentCol] = key.toUpperCase();
       state.currentCol += 1;
     }
+    playSound('click');
     render();
     return;
   }
@@ -134,6 +155,7 @@ function handleKeyInput(key) {
   }
 
   if (key.toLowerCase() === 'enter') {
+    playSound('click');
     submitGuess();
   }
 }
@@ -213,8 +235,14 @@ function updateCheatPanel() {
   if (state.developerMode) {
     panel.textContent = `Answer: ${state.answer}`;
     panel.style.display = 'block';
+    if (externalLinksEl) {
+      externalLinksEl.style.display = 'flex';
+    }
   } else {
     panel.style.display = 'none';
+    if (externalLinksEl) {
+      externalLinksEl.style.display = 'none';
+    }
   }
 }
 
@@ -254,6 +282,7 @@ function submitGuess() {
   if (guess === state.answer) {
     state.status = 'won';
     setStatus('You got it! 🎉');
+    playSound('win');
     render();
     return;
   }
@@ -264,6 +293,7 @@ function submitGuess() {
   if (state.currentRow >= MAX_ROWS) {
     state.status = 'lost';
     setStatus(`Game over. The word was ${state.answer.toUpperCase()}.`);
+    playSound('lose');
     render();
     return;
   }
@@ -331,6 +361,7 @@ function getRandomAnswerWord() {
 }
 
 function startNewGame() {
+  playSound('click');
   const choice = window.prompt(
     "Start new game: type NEW for a new random word, or SAME for today's word.",
     'SAME'

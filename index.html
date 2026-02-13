@@ -1,175 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wordle</title>
-    <style>
-      :root {
-        --bg: #121213;
-        --tile: #3a3a3c;
-        --border: #565758;
-        --text: #f8f8f8;
-        --empty: #121213;
-        --correct: #538d4e;
-        --present: #b59f3b;
-        --absent: #3a3a3c;
-        --key: #818384;
-      }
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Wordle</title>
+	<style>
+	  :root {
+		--bg: #121213;
+		--tile: #3a3a3c;
+		--border: #565758;
+		--text: #f8f8f8;
+		--empty: #121213;
+		--correct: #538d4e;
+		--present: #b59f3b;
+		--absent: #3a3a3c;
+		--key: #818384;
+	  }
 
-      * {
-        box-sizing: border-box;
-      }
+	  * {
+		box-sizing: border-box;
+	  }
 
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-      }
+	  body {
+		margin: 0;
+		font-family: Arial, Helvetica, sans-serif;
+		background: var(--bg);
+		color: var(--text);
+		min-height: 100vh;
+		display: grid;
+		place-items: center;
+	  }
 
-      .app {
-        width: min(95vw, 520px);
-        display: grid;
-        gap: 1rem;
-        padding: 1rem 0.5rem 2rem;
-      }
+	  .app {
+		width: min(95vw, 520px);
+		display: grid;
+		gap: 1rem;
+		padding: 1rem 0.5rem 2rem;
+	  }
 
-      h1 {
-        margin: 0;
-        text-align: center;
-        font-size: clamp(1.6rem, 4vw, 2rem);
-        letter-spacing: 0.08em;
-      }
+	  h1 {
+		margin: 0;
+		text-align: center;
+		font-size: clamp(1.6rem, 4vw, 2rem);
+		letter-spacing: 0.08em;
+	  }
 
-      .toolbar {
-        display: flex;
-        justify-content: center;
-      }
+	  .toolbar {
+		display: flex;
+		justify-content: center;
+	  }
 
-      button {
-        border: 0;
-        border-radius: 6px;
-        color: white;
-        background: #2f80ed;
-        padding: 0.6rem 1rem;
-        font-weight: 700;
-        cursor: pointer;
-      }
+	  button {
+		border: 0;
+		border-radius: 6px;
+		color: white;
+		background: #2f80ed;
+		padding: 0.6rem 1rem;
+		font-weight: 700;
+		cursor: pointer;
+	  }
 
-      .status {
-        min-height: 1.5rem;
-        text-align: center;
-        font-weight: 600;
-      }
+	  .status {
+		min-height: 1.5rem;
+		text-align: center;
+		font-weight: 600;
+	  }
 
-      .external-links {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
+	  .external-links {
+		display: none;
+		justify-content: center;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	  }
 
-      .link-button {
-        text-decoration: none;
-        display: inline-block;
-        border: 0;
-        border-radius: 6px;
-        color: white;
-        background: #4b5563;
-        padding: 0.5rem 0.85rem;
-        font-weight: 700;
-        font-size: 0.9rem;
-      }
+	  .link-button {
+		text-decoration: none;
+		display: inline-block;
+		border: 0;
+		border-radius: 6px;
+		color: white;
+		background: #4b5563;
+		padding: 0.5rem 0.85rem;
+		font-weight: 700;
+		font-size: 0.9rem;
+	  }
 
-      .board {
-        display: grid;
-        gap: 0.35rem;
-        justify-content: center;
-      }
+	  .board {
+		display: grid;
+		gap: 0.35rem;
+		justify-content: center;
+	  }
 
-      .row {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 0.35rem;
-      }
+	  .row {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.35rem;
+	  }
 
-      .tile {
-        width: clamp(2.8rem, 10vw, 3.6rem);
-        aspect-ratio: 1;
-        border: 2px solid var(--border);
-        display: grid;
-        place-items: center;
-        text-transform: uppercase;
-        font-weight: 700;
-        font-size: clamp(1.2rem, 5vw, 1.8rem);
-        user-select: none;
-      }
+	  .tile {
+		width: clamp(2.8rem, 10vw, 3.6rem);
+		aspect-ratio: 1;
+		border: 2px solid var(--border);
+		display: grid;
+		place-items: center;
+		text-transform: uppercase;
+		font-weight: 700;
+		font-size: clamp(1.2rem, 5vw, 1.8rem);
+		user-select: none;
+	  }
 
-      .tile[data-state='empty'] {
-        background: var(--empty);
-      }
+	  .tile[data-state='empty'] {
+		background: var(--empty);
+	  }
 
-      .tile[data-state='filled'] {
-        border-color: #878a8c;
-      }
+	  .tile[data-state='filled'] {
+		border-color: #878a8c;
+	  }
 
-      .tile[data-state='correct'] {
-        background: var(--correct);
-        border-color: var(--correct);
-      }
+	  .tile[data-state='correct'] {
+		background: var(--correct);
+		border-color: var(--correct);
+	  }
 
-      .tile[data-state='present'] {
-        background: var(--present);
-        border-color: var(--present);
-      }
+	  .tile[data-state='present'] {
+		background: var(--present);
+		border-color: var(--present);
+	  }
 
-      .tile[data-state='absent'] {
-        background: var(--absent);
-        border-color: var(--absent);
-      }
+	  .tile[data-state='absent'] {
+		background: var(--absent);
+		border-color: var(--absent);
+	  }
 
-      .keyboard {
-        display: grid;
-        gap: 0.4rem;
-      }
+	  .keyboard {
+		display: grid;
+		gap: 0.4rem;
+	  }
 
-      .key-row {
-        display: flex;
-        justify-content: center;
-        gap: 0.35rem;
-      }
+	  .key-row {
+		display: flex;
+		justify-content: center;
+		gap: 0.35rem;
+	  }
 
-      .key {
-        min-width: clamp(1.8rem, 8vw, 2.7rem);
-        padding: 0.75rem 0.35rem;
-        border-radius: 6px;
-        border: 0;
-        font-weight: 700;
-        text-transform: uppercase;
-        background: var(--key);
-      }
+	  .key {
+		min-width: clamp(1.8rem, 8vw, 2.7rem);
+		padding: 0.75rem 0.35rem;
+		border-radius: 6px;
+		border: 0;
+		font-weight: 700;
+		text-transform: uppercase;
+		background: var(--key);
+	  }
 
-      .key.wide {
-        min-width: clamp(3.8rem, 15vw, 4.8rem);
-        font-size: 0.75rem;
-      }
+	  .key.wide {
+		min-width: clamp(3.8rem, 15vw, 4.8rem);
+		font-size: 0.75rem;
+	  }
 
-      .key[data-state='correct'] {
-        background: var(--correct);
-      }
+	  .key[data-state='correct'] {
+		background: var(--correct);
+	  }
 
-      .key[data-state='present'] {
-        background: var(--present);
-      }
+	  .key[data-state='present'] {
+		background: var(--present);
+	  }
 
-      .key[data-state='absent'] {
-        background: var(--absent);
-      }
-    </style>
+	  .key[data-state='absent'] {
+		background: var(--absent);
+	  }
+	</style>
   </head>
   <body>
 	<main class="app">
@@ -180,10 +180,12 @@
 
 	  <p id="status" class="status" aria-live="polite"></p>
 
-	  <div class="external-links" aria-label="Other games">
+
+	  <div id="external-links" class="external-links" aria-label="Other games">
 		<a class="link-button" href="https://n0one123.github.io/Hangman-game" target="_blank" rel="noreferrer">Hangman</a>
 		<a class="link-button" href="https://n0one123.github.io/Maze" target="_blank" rel="noreferrer">Maze</a>
 	  </div>
+
 
 	  <section class="board" id="board" aria-label="Wordle board"></section>
 
