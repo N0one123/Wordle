@@ -130,12 +130,33 @@ function setStatus(message) {
   statusEl.textContent = message;
 }
 
+
+function animateKeyPress(keyValue) {
+  const keyEl = document.querySelector(`.key[data-key="${keyValue}"]`);
+  if (!keyEl) {
+    return;
+  }
+
+  keyEl.classList.add('pressed');
+  setTimeout(() => keyEl.classList.remove('pressed'), 110);
+}
+
+function animateRowFlip(rowIndex) {
+  tiles[rowIndex].forEach((tile, index) => {
+    setTimeout(() => {
+      tile.classList.add('flipping');
+      setTimeout(() => tile.classList.remove('flipping'), 430);
+    }, index * 120);
+  });
+}
+
 function handleKeyInput(key) {
   if (state.status !== 'active') {
     return;
   }
 
   if (/^[a-z]$/i.test(key)) {
+    animateKeyPress(key.toLowerCase());
     if (state.currentCol < WORD_LENGTH) {
       state.guesses[state.currentRow][state.currentCol] = key.toUpperCase();
       state.currentCol += 1;
@@ -146,6 +167,7 @@ function handleKeyInput(key) {
   }
 
   if (key.toLowerCase() === 'backspace') {
+    animateKeyPress('backspace');
     if (state.currentCol > 0) {
       state.currentCol -= 1;
       state.guesses[state.currentRow][state.currentCol] = '';
@@ -155,6 +177,7 @@ function handleKeyInput(key) {
   }
 
   if (key.toLowerCase() === 'enter') {
+    animateKeyPress('enter');
     playSound('click');
     submitGuess();
   }
@@ -278,12 +301,14 @@ function submitGuess() {
   const scored = scoreGuess(guess, state.answer);
   state.evaluations[state.currentRow] = scored;
   updateKeyboardStates([...guess], scored);
+  const submittedRow = state.currentRow;
 
   if (guess === state.answer) {
     state.status = 'won';
     setStatus('You got it! 🎉');
     playSound('win');
     render();
+    animateRowFlip(submittedRow);
     return;
   }
 
@@ -295,11 +320,13 @@ function submitGuess() {
     setStatus(`Game over. The word was ${state.answer.toUpperCase()}.`);
     playSound('lose');
     render();
+    animateRowFlip(submittedRow);
     return;
   }
 
   setStatus('');
   render();
+  animateRowFlip(submittedRow);
 }
 
 function onPhysicalKeydown(event) {
