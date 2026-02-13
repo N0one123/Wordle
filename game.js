@@ -1,4 +1,4 @@
-import { isValidGuess, getRandomAnswer } from './dictionary.js';
+import { ANSWER_WORDS, isValidGuess, getRandomAnswer } from './dictionary.js';
 
 const MAX_ROWS = 6;
 const WORD_LENGTH = 5;
@@ -20,9 +20,9 @@ const statePriority = { absent: 1, present: 2, correct: 3 };
 let state = createNewState();
 let tiles = [];
 
-function createNewState() {
+function createNewState(answerOverride = getRandomAnswer()) {
   return {
-    answer: getRandomAnswer(),
+    answer: answerOverride,
     guesses: Array.from({ length: MAX_ROWS }, () => Array(WORD_LENGTH).fill('')),
     evaluations: Array.from({ length: MAX_ROWS }, () => Array(WORD_LENGTH).fill('empty')),
     currentRow: 0,
@@ -270,9 +270,35 @@ function loadPersistedState() {
   }
 }
 
+function getRandomAnswerWord() {
+  return ANSWER_WORDS[Math.floor(Math.random() * ANSWER_WORDS.length)];
+}
+
 function startNewGame() {
-  state = createNewState();
-  setStatus('New game started.');
+  const choice = window.prompt(
+    "Start new game: type NEW for a new random word, or SAME for today's word.",
+    'SAME'
+  );
+
+  if (choice === null) {
+    setStatus('New game cancelled.');
+    return;
+  }
+
+  const normalizedChoice = choice.trim().toUpperCase();
+  if (normalizedChoice !== 'NEW' && normalizedChoice !== 'SAME') {
+    setStatus('Please type NEW or SAME.');
+    return;
+  }
+
+  const selectedAnswer = normalizedChoice === 'NEW' ? getRandomAnswerWord() : getRandomAnswer();
+
+  state = createNewState(selectedAnswer);
+  setStatus(
+    normalizedChoice === 'NEW'
+      ? 'New game started with a random word.'
+      : "New game started with today's word."
+  );
   render();
 }
 
