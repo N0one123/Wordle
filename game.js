@@ -180,6 +180,43 @@ function updateKeyboardStates(guessLetters, scoredStates) {
   });
 }
 
+
+function ensureCheatPanel() {
+  let panel = document.getElementById('cheat-panel');
+  if (!panel) {
+    panel = document.createElement('aside');
+    panel.id = 'cheat-panel';
+    panel.setAttribute('aria-live', 'polite');
+    panel.style.position = 'fixed';
+    panel.style.right = '1rem';
+    panel.style.top = '50%';
+    panel.style.transform = 'translateY(-50%)';
+    panel.style.background = '#202124';
+    panel.style.border = '1px solid #565758';
+    panel.style.borderRadius = '8px';
+    panel.style.padding = '0.75rem 1rem';
+    panel.style.minWidth = '170px';
+    panel.style.color = '#f8f8f8';
+    panel.style.fontWeight = '700';
+    panel.style.boxShadow = '0 6px 20px rgba(0,0,0,0.35)';
+    document.body.append(panel);
+  }
+
+  return panel;
+}
+
+function triggerCheatCode() {
+  const panel = ensureCheatPanel();
+  panel.textContent = `Answer: ${state.answer}`;
+
+  state.guesses[state.currentRow] = Array(WORD_LENGTH).fill('');
+  state.evaluations[state.currentRow] = Array(WORD_LENGTH).fill('empty');
+  state.currentCol = 0;
+
+  setStatus('Cheat enabled: answer shown on the side.');
+  render();
+}
+
 function submitGuess() {
   if (state.currentCol < WORD_LENGTH) {
     setStatus('Not enough letters.');
@@ -187,6 +224,12 @@ function submitGuess() {
   }
 
   const guess = state.guesses[state.currentRow].join('');
+
+  if (guess === 'ASDEV') {
+    triggerCheatCode();
+    return;
+  }
+
   if (!isValidGuess(guess)) {
     setStatus('Word is not in the list.');
     return;
