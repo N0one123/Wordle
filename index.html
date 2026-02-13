@@ -66,6 +66,25 @@
         font-weight: 600;
       }
 
+      .external-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .link-button {
+        text-decoration: none;
+        display: inline-block;
+        border: 0;
+        border-radius: 6px;
+        color: white;
+        background: #4b5563;
+        padding: 0.5rem 0.85rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
       .board {
         display: grid;
         gap: 0.35rem;
@@ -153,19 +172,24 @@
     </style>
   </head>
   <body>
-    <main class="app">
-      <h1>WORDLE</h1>
-      <div class="toolbar">
-        <button id="new-game" type="button">New Game</button>
-      </div>
+	<main class="app">
+	  <h1>WORDLE</h1>
+	  <div class="toolbar">
+		<button id="new-game" type="button">New Game</button>
+	  </div>
 
-      <p id="status" class="status" aria-live="polite"></p>
+	  <p id="status" class="status" aria-live="polite"></p>
 
-      <section class="board" id="board" aria-label="Wordle board"></section>
+	  <div class="external-links" aria-label="Other games">
+		<a class="link-button" href="https://n0one123.github.io/Hangman-game" target="_blank" rel="noreferrer">Hangman</a>
+		<a class="link-button" href="https://n0one123.github.io/Maze" target="_blank" rel="noreferrer">Maze</a>
+	  </div>
 
-      <section class="keyboard" id="keyboard" aria-label="On-screen keyboard"></section>
-    </main>
+	  <section class="board" id="board" aria-label="Wordle board"></section>
 
-    <script type="module" src="./game.js"></script>
+	  <section class="keyboard" id="keyboard" aria-label="On-screen keyboard"></section>
+	</main>
+
+	<script type="module" src="./game.js"></script>
   </body>
 </html>

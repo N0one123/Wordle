@@ -28,7 +28,8 @@ function createNewState(answerOverride = getRandomAnswer()) {
     currentRow: 0,
     currentCol: 0,
     status: 'active',
-    keyStates: {}
+    keyStates: {},
+    developerMode: false
   };
 }
 
@@ -101,6 +102,7 @@ function render() {
     keyEl.dataset.state = keyState || '';
   });
 
+  updateCheatPanel();
   persistState();
 }
 
@@ -199,21 +201,31 @@ function ensureCheatPanel() {
     panel.style.color = '#f8f8f8';
     panel.style.fontWeight = '700';
     panel.style.boxShadow = '0 6px 20px rgba(0,0,0,0.35)';
+    panel.style.display = 'none';
     document.body.append(panel);
   }
 
   return panel;
 }
 
-function triggerCheatCode() {
+function updateCheatPanel() {
   const panel = ensureCheatPanel();
-  panel.textContent = `Answer: ${state.answer}`;
+  if (state.developerMode) {
+    panel.textContent = `Answer: ${state.answer}`;
+    panel.style.display = 'block';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function toggleDeveloperMode() {
+  state.developerMode = !state.developerMode;
 
   state.guesses[state.currentRow] = Array(WORD_LENGTH).fill('');
   state.evaluations[state.currentRow] = Array(WORD_LENGTH).fill('empty');
   state.currentCol = 0;
 
-  setStatus('Cheat enabled: answer shown on the side.');
+  setStatus(state.developerMode ? 'Welcome developer.' : 'Developer mode disabled.');
   render();
 }
 
@@ -226,7 +238,7 @@ function submitGuess() {
   const guess = state.guesses[state.currentRow].join('');
 
   if (guess === 'ASDEV') {
-    triggerCheatCode();
+    toggleDeveloperMode();
     return;
   }
 
@@ -306,7 +318,8 @@ function loadPersistedState() {
       currentRow: parsed.currentRow,
       currentCol: parsed.currentCol,
       status: parsed.status,
-      keyStates: parsed.keyStates || {}
+      keyStates: parsed.keyStates || {},
+      developerMode: Boolean(parsed.developerMode)
     };
   } catch {
     return null;
@@ -336,7 +349,9 @@ function startNewGame() {
 
   const selectedAnswer = normalizedChoice === 'NEW' ? getRandomAnswerWord() : getRandomAnswer();
 
+  const keepDeveloperMode = state.developerMode;
   state = createNewState(selectedAnswer);
+  state.developerMode = keepDeveloperMode;
   setStatus(
     normalizedChoice === 'NEW'
       ? 'New game started with a random word.'
