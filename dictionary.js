@@ -12,7 +12,9 @@ const EXTRA_GUESSES = [
   'SMALL', 'LARGE', 'POINT', 'HOUSE', 'WORLD', 'WATER', 'AFTER', 'THING', 'HEART', 'LIGHT',
   'SMART', 'SWEPT', 'SPARE', 'STARE', 'SLATE', 'CRONY', 'CROWN', 'BROWN', 'GREEN', 'BLUSH',
   'SHARD', 'CHARM', 'SMILE', 'PRIDE', 'PROBE', 'SHINY', 'PLAIN', 'TRACE', 'TRIED', 'GRIND',
-  'FABLE', 'ABIDE', 'ARISE', 'RAISE', 'LATER', 'IRATE', 'SAINT', 'TEARS', 'RATES', 'STAIN'
+  'FABLE', 'ABIDE', 'ARISE', 'RAISE', 'LATER', 'IRATE', 'SAINT', 'TEARS', 'RATES', 'STAIN', 
+  'DRONE', 'MUSIC', 'SIGHT', 'NIGHT', 'RIGHT', 'LIGHT', 'MIGHT', 'SIGHT', 'TIGHT', 'BRAVE',
+  'CRAVE', 'GRAVE', 'SLAVE', 'SHAVE', 'BURST', 'GUSTO', 'GUSTY', 'GUSTS', 'TRUST', 'BURST'
 ];
 
 const DICTIONARY_BY_LETTER = {
@@ -61,4 +63,3 @@ function getRandomAnswer(seedDate = new Date()) {
 }
 
 export { ANSWER_WORDS, EXTRA_GUESSES, DICTIONARY_BY_LETTER, VALID_GUESSES, isValidGuess, getDailyIndex, getRandomAnswer };
-
