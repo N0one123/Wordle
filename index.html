@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>Wordle</title>
-	<style>
-	  :root {
-		--bg: #121213;
-		--tile: #3a3a3c;
-		--border: #565758;
-		--text: #f8f8f8;
-		--empty: #121213;
-		--correct: #538d4e;
-		--present: #b59f3b;
-		--absent: #3a3a3c;
-		--key: #818384;
-	  }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Wordle</title>
+    <style>
+      :root {
+        --bg: #121213;
+        --tile: #3a3a3c;
+        --border: #565758;
+        --text: #f8f8f8;
+        --empty: #121213;
+        --correct: #538d4e;
+        --present: #b59f3b;
+        --absent: #3a3a3c;
+        --key: #818384;
+      }
+ 
+      * {
+        box-sizing: border-box;
+      }
 
-	  * {
-		box-sizing: border-box;
-	  }
-
-	  body {
-		margin: 0;
-		font-family: Arial, Helvetica, sans-serif;
-		background: var(--bg);
-		color: var(--text);
-		min-height: 100dvh;
-		display: grid;
-		place-items: center;
-		overflow: hidden;
-	  }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+      }
 
 	  .app {
-		width: min(95vw, 520px);
+		width: min(calc(100vw - 20px), 520px);
 		display: grid;
 		gap: 1rem;
 		padding: 1rem 0.5rem 1rem;
-		max-height: 100dvh;
+		max-height: calc(100dvh - 20px);
+	  }
+
+	  .rotate-device {
+		display: none;
+		position: fixed;
+		inset: 0;
+		z-index: 1000;
+		background: rgba(10, 10, 11, 0.96);
+		color: #fff;
+		font-weight: 700;
+		text-align: center;
+		align-items: center;
+		justify-content: center;
+		padding: 1.2rem;
 	  }
 
 	  h1 {
@@ -188,7 +203,7 @@
 
 	  @media (max-width: 520px) {
 		.app {
-		  width: 100vw;
+		  width: calc(100vw - 20px);
 		  padding-inline: 0.35rem;
 		  gap: 0.75rem;
 		}
@@ -200,6 +215,12 @@
 		.key {
 		  min-width: clamp(1.65rem, 8vw, 2.25rem);
 		  padding: 0.68rem 0.28rem;
+		}
+	  }
+
+	  @media (max-width: 767px) and (orientation: landscape) {
+		.rotate-device {
+		  display: flex;
 		}
 	  }
 
@@ -222,6 +243,8 @@
 	</style>
   </head>
   <body>
+	<div class="rotate-device" aria-live="polite">Please rotate your phone to portrait mode.</div>
+
 	<main class="app">
 	  <h1>WORDLE</h1>
 	  <div class="toolbar">
@@ -230,10 +253,12 @@
 
 	  <p id="status" class="status" aria-live="polite"></p>
 
+
 	  <div id="external-links" class="external-links" aria-label="Other games">
 		<a class="link-button" href="https://n0one123.github.io/Hangman-game" target="_blank" rel="noreferrer">Hangman</a>
 		<a class="link-button" href="https://n0one123.github.io/Maze" target="_blank" rel="noreferrer">Maze</a>
 	  </div>
+
 
 	  <section class="board" id="board" aria-label="Wordle board"></section>
 
