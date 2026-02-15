@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -33,6 +33,18 @@
         overflow-x: hidden;
         overflow-y: auto;
         padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+      }
+
+      body.dev-mode-bg {
+        background: linear-gradient(120deg, #111111, #3a3a3c, #161616, #4b4b4f);
+        background-size: 300% 300%;
+        animation: devGradientMove 8s ease infinite;
+      }
+
+      @keyframes devGradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
       }
 
       .app {

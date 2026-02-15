@@ -9,6 +9,7 @@ const keyboardEl = document.getElementById('keyboard');
 const statusEl = document.getElementById('status');
 const newGameButton = document.getElementById('new-game');
 const externalLinksEl = document.getElementById('external-links');
+const bodyEl = document.body;
 
 const keyboardLayout = [
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -49,7 +50,8 @@ function createNewState(answerOverride = getRandomAnswer()) {
     currentCol: 0,
     status: 'active',
     keyStates: {},
-    developerMode: false
+    developerMode: false,
+    developerAnswerRevealed: false
   };
 }
 
@@ -122,7 +124,7 @@ function render() {
     keyEl.dataset.state = keyState || '';
   });
 
-  updateCheatPanel();
+  updateDeveloperVisuals();
   persistState();
 }
 
@@ -242,27 +244,88 @@ function ensureCheatPanel() {
     panel.style.border = '1px solid #565758';
     panel.style.borderRadius = '8px';
     panel.style.padding = '0.75rem 1rem';
-    panel.style.minWidth = '170px';
+    panel.style.minWidth = '190px';
     panel.style.color = '#f8f8f8';
     panel.style.fontWeight = '700';
     panel.style.boxShadow = '0 6px 20px rgba(0,0,0,0.35)';
     panel.style.display = 'none';
+
+    const title = document.createElement('div');
+    title.textContent = 'Developer';
+    title.style.marginBottom = '0.4rem';
+
+    const answerText = document.createElement('div');
+    answerText.id = 'cheat-answer';
+    answerText.style.marginBottom = '0.6rem';
+
+    const revealButton = document.createElement('button');
+    revealButton.type = 'button';
+    revealButton.id = 'cheat-reveal-btn';
+    revealButton.textContent = 'Reveal';
+    revealButton.style.marginRight = '0.45rem';
+    revealButton.style.padding = '0.35rem 0.55rem';
+    revealButton.style.background = '#4b5563';
+
+    revealButton.addEventListener('click', () => {
+      state.developerAnswerRevealed = !state.developerAnswerRevealed;
+      render();
+    });
+
+    const removeLineButton = document.createElement('button');
+    removeLineButton.type = 'button';
+    removeLineButton.id = 'cheat-remove-line-btn';
+    removeLineButton.textContent = 'Remove line';
+    removeLineButton.style.padding = '0.35rem 0.55rem';
+    removeLineButton.style.background = '#5f6368';
+
+    removeLineButton.addEventListener('click', () => {
+      removePreviousLine();
+    });
+
+    panel.append(title, answerText, revealButton, removeLineButton);
     document.body.append(panel);
   }
 
   return panel;
 }
 
-function updateCheatPanel() {
+function removePreviousLine() {
+  if (state.currentRow <= 0) {
+    setStatus('No previous line to remove.');
+    return;
+  }
+
+  const previousRow = state.currentRow - 1;
+  state.guesses[previousRow] = Array(WORD_LENGTH).fill('');
+  state.evaluations[previousRow] = Array(WORD_LENGTH).fill('empty');
+  state.currentRow = previousRow;
+  state.currentCol = 0;
+  setStatus('Previous line removed.');
+  render();
+}
+
+function updateDeveloperVisuals() {
   const panel = ensureCheatPanel();
+  const answerText = document.getElementById('cheat-answer');
+  const revealButton = document.getElementById('cheat-reveal-btn');
+
   if (state.developerMode) {
-    panel.textContent = `Answer: ${state.answer}`;
     panel.style.display = 'block';
+    bodyEl.classList.add('dev-mode-bg');
     if (externalLinksEl) {
       externalLinksEl.style.display = 'flex';
     }
+
+    if (state.developerAnswerRevealed) {
+      answerText.textContent = `Answer: ${state.answer}`;
+      revealButton.textContent = 'Hide';
+    } else {
+      answerText.textContent = 'Answer: [hidden]';
+      revealButton.textContent = 'Reveal';
+    }
   } else {
     panel.style.display = 'none';
+    bodyEl.classList.remove('dev-mode-bg');
     if (externalLinksEl) {
       externalLinksEl.style.display = 'none';
     }
@@ -271,6 +334,7 @@ function updateCheatPanel() {
 
 function toggleDeveloperMode() {
   state.developerMode = !state.developerMode;
+  state.developerAnswerRevealed = false;
 
   state.guesses[state.currentRow] = Array(WORD_LENGTH).fill('');
   state.evaluations[state.currentRow] = Array(WORD_LENGTH).fill('empty');
@@ -376,7 +440,8 @@ function loadPersistedState() {
       currentCol: parsed.currentCol,
       status: parsed.status,
       keyStates: parsed.keyStates || {},
-      developerMode: Boolean(parsed.developerMode)
+      developerMode: Boolean(parsed.developerMode),
+      developerAnswerRevealed: Boolean(parsed.developerAnswerRevealed)
     };
   } catch {
     return null;
@@ -410,6 +475,7 @@ function startNewGame() {
   const keepDeveloperMode = state.developerMode;
   state = createNewState(selectedAnswer);
   state.developerMode = keepDeveloperMode;
+  state.developerAnswerRevealed = false;
   setStatus(
     normalizedChoice === 'NEW'
       ? 'New game started with a random word.'
