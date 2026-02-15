@@ -16,7 +16,7 @@
         --absent: #3a3a3c;
         --key: #818384;
       }
- 
+
       * {
         box-sizing: border-box;
       }
@@ -27,244 +27,244 @@
         background: var(--bg);
         color: var(--text);
         min-height: 100dvh;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        overflow-x: hidden;
+        overflow-y: auto;
         padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
       }
 
-	  .app {
-		width: min(calc(100vw - 20px), 520px);
-		display: grid;
-		gap: 1rem;
-		padding: 1rem 0.5rem 1rem;
-		max-height: calc(100dvh - 20px);
-	  }
+      .app {
+        width: min(calc(100vw - 20px), 520px);
+        display: grid;
+        gap: 1rem;
+        padding: 1rem 0.5rem 1rem;
+        margin: 0 auto;
+      }
 
-	  .rotate-device {
-		display: none;
-		position: fixed;
-		inset: 0;
-		z-index: 1000;
-		background: rgba(10, 10, 11, 0.96);
-		color: #fff;
-		font-weight: 700;
-		text-align: center;
-		align-items: center;
-		justify-content: center;
-		padding: 1.2rem;
-	  }
+      .rotate-device {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(10, 10, 11, 0.96);
+        color: #fff;
+        font-weight: 700;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        padding: 1.2rem;
+      }
 
-	  h1 {
-		margin: 0;
-		text-align: center;
-		font-size: clamp(1.6rem, 4vw, 2rem);
-		letter-spacing: 0.08em;
-	  }
+      h1 {
+        margin: 0;
+        text-align: center;
+        font-size: clamp(1.6rem, 4vw, 2rem);
+        letter-spacing: 0.08em;
+      }
 
-	  .toolbar {
-		display: flex;
-		justify-content: center;
-	  }
+      .toolbar {
+        display: flex;
+        justify-content: center;
+      }
 
-	  button {
-		border: 0;
-		border-radius: 6px;
-		color: white;
-		background: #2f80ed;
-		padding: 0.6rem 1rem;
-		font-weight: 700;
-		cursor: pointer;
-		transition: transform 120ms ease, filter 120ms ease;
-	  }
+      button {
+        border: 0;
+        border-radius: 6px;
+        color: white;
+        background: #2f80ed;
+        padding: 0.6rem 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 120ms ease, filter 120ms ease;
+      }
 
-	  button:active {
-		transform: scale(0.96);
-		filter: brightness(1.05);
-	  }
+      button:active {
+        transform: scale(0.96);
+        filter: brightness(1.05);
+      }
 
-	  .status {
-		min-height: 1.5rem;
-		text-align: center;
-		font-weight: 600;
-	  }
+      .status {
+        min-height: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+      }
 
-	  .external-links {
-		display: none;
-		justify-content: center;
-		gap: 0.5rem;
-		flex-wrap: wrap;
-	  }
+      .external-links {
+        display: none;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
 
-	  .link-button {
-		text-decoration: none;
-		display: inline-block;
-		border: 0;
-		border-radius: 6px;
-		color: white;
-		background: #4b5563;
-		padding: 0.5rem 0.85rem;
-		font-weight: 700;
-		font-size: 0.9rem;
-		transition: transform 120ms ease, filter 120ms ease;
-	  }
+      .link-button {
+        text-decoration: none;
+        display: inline-block;
+        border: 0;
+        border-radius: 6px;
+        color: white;
+        background: #4b5563;
+        padding: 0.5rem 0.85rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: transform 120ms ease, filter 120ms ease;
+      }
 
-	  .link-button:active {
-		transform: scale(0.96);
-		filter: brightness(1.05);
-	  }
+      .link-button:active {
+        transform: scale(0.96);
+        filter: brightness(1.05);
+      }
 
-	  .board {
-		display: grid;
-		gap: 0.35rem;
-		justify-content: center;
-	  }
+      .board {
+        display: grid;
+        gap: 0.35rem;
+        justify-content: center;
+      }
 
-	  .row {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 0.35rem;
-	  }
+      .row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.35rem;
+      }
 
-	  .tile {
-		width: clamp(2.8rem, 10vw, 3.6rem);
-		aspect-ratio: 1;
-		border: 2px solid var(--border);
-		display: grid;
-		place-items: center;
-		text-transform: uppercase;
-		font-weight: 700;
-		font-size: clamp(1.2rem, 5vw, 1.8rem);
-		user-select: none;
-		backface-visibility: hidden;
-		transform-style: preserve-3d;
-	  }
+      .tile {
+        width: clamp(2.8rem, 10vw, 3.6rem);
+        aspect-ratio: 1;
+        border: 2px solid var(--border);
+        display: grid;
+        place-items: center;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: clamp(1.2rem, 5vw, 1.8rem);
+        user-select: none;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+      }
 
-	  .tile.flipping {
-		animation: tileFlip 420ms ease;
-	  }
+      .tile.flipping {
+        animation: tileFlip 420ms ease;
+      }
 
-	  @keyframes tileFlip {
-		0% { transform: rotateX(0deg); }
-		50% { transform: rotateX(90deg); }
-		100% { transform: rotateX(0deg); }
-	  }
+      @keyframes tileFlip {
+        0% { transform: rotateX(0deg); }
+        50% { transform: rotateX(90deg); }
+        100% { transform: rotateX(0deg); }
+      }
 
-	  .tile[data-state='empty'] {
-		background: var(--empty);
-	  }
+      .tile[data-state='empty'] {
+        background: var(--empty);
+      }
 
-	  .tile[data-state='filled'] {
-		border-color: #878a8c;
-	  }
+      .tile[data-state='filled'] {
+        border-color: #878a8c;
+      }
 
-	  .tile[data-state='correct'] {
-		background: var(--correct);
-		border-color: var(--correct);
-	  }
+      .tile[data-state='correct'] {
+        background: var(--correct);
+        border-color: var(--correct);
+      }
 
-	  .tile[data-state='present'] {
-		background: var(--present);
-		border-color: var(--present);
-	  }
+      .tile[data-state='present'] {
+        background: var(--present);
+        border-color: var(--present);
+      }
 
-	  .tile[data-state='absent'] {
-		background: var(--absent);
-		border-color: var(--absent);
-	  }
+      .tile[data-state='absent'] {
+        background: var(--absent);
+        border-color: var(--absent);
+      }
 
-	  .keyboard {
-		display: grid;
-		gap: 0.4rem;
-	  }
+      .keyboard {
+        display: grid;
+        gap: 0.4rem;
+      }
 
-	  .key-row {
-		display: flex;
-		justify-content: center;
-		gap: 0.35rem;
-	  }
+      .key-row {
+        display: flex;
+        justify-content: center;
+        gap: 0.35rem;
+      }
 
-	  .key {
-		min-width: clamp(1.8rem, 8vw, 2.7rem);
-		padding: 0.75rem 0.35rem;
-		border-radius: 6px;
-		border: 0;
-		font-weight: 700;
-		text-transform: uppercase;
-		background: var(--key);
-		transition: transform 100ms ease, filter 100ms ease;
-	  }
+      .key {
+        min-width: clamp(1.8rem, 8vw, 2.7rem);
+        padding: 0.75rem 0.35rem;
+        border-radius: 6px;
+        border: 0;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: var(--key);
+        transition: transform 100ms ease, filter 100ms ease;
+      }
 
-	  .key:active,
-	  .key.pressed {
-		transform: scale(0.94);
-		filter: brightness(1.08);
-	  }
+      .key:active,
+      .key.pressed {
+        transform: scale(0.94);
+        filter: brightness(1.08);
+      }
 
-	  @media (max-width: 520px) {
-		.app {
-		  width: calc(100vw - 20px);
-		  padding-inline: 0.35rem;
-		  gap: 0.75rem;
-		}
+      @media (max-width: 520px) {
+        .app {
+          width: calc(100vw - 20px);
+          padding-inline: 0.35rem;
+          gap: 0.75rem;
+        }
 
-		.tile {
-		  width: clamp(2.55rem, 17vw, 3.1rem);
-		}
+        .tile {
+          width: clamp(2.55rem, 17vw, 3.1rem);
+        }
 
-		.key {
-		  min-width: clamp(1.65rem, 8vw, 2.25rem);
-		  padding: 0.68rem 0.28rem;
-		}
-	  }
+        .key {
+          min-width: clamp(1.65rem, 8vw, 2.25rem);
+          padding: 0.68rem 0.28rem;
+        }
+      }
 
-	  @media (max-width: 767px) and (orientation: landscape) {
-		.rotate-device {
-		  display: flex;
-		}
-	  }
+      @media (max-width: 767px) and (orientation: landscape) {
+        .rotate-device {
+          display: flex;
+        }
+      }
 
-	  .key.wide {
-		min-width: clamp(3.8rem, 15vw, 4.8rem);
-		font-size: 0.75rem;
-	  }
+      .key.wide {
+        min-width: clamp(3.8rem, 15vw, 4.8rem);
+        font-size: 0.75rem;
+      }
 
-	  .key[data-state='correct'] {
-		background: var(--correct);
-	  }
+      .key[data-state='correct'] {
+        background: var(--correct);
+      }
 
-	  .key[data-state='present'] {
-		background: var(--present);
-	  }
+      .key[data-state='present'] {
+        background: var(--present);
+      }
 
-	  .key[data-state='absent'] {
-		background: var(--absent);
-	  }
-	</style>
+      .key[data-state='absent'] {
+        background: var(--absent);
+      }
+    </style>
   </head>
   <body>
-	<div class="rotate-device" aria-live="polite">Please rotate your phone to portrait mode.</div>
+    <div class="rotate-device" aria-live="polite">Please rotate your phone to portrait mode.</div>
 
-	<main class="app">
-	  <h1>WORDLE</h1>
-	  <div class="toolbar">
-		<button id="new-game" type="button">New Game</button>
-	  </div>
+    <main class="app">
+      <h1>WORDLE</h1>
+      <div class="toolbar">
+        <button id="new-game" type="button">New Game</button>
+      </div>
 
-	  <p id="status" class="status" aria-live="polite"></p>
+      <p id="status" class="status" aria-live="polite"></p>
 
+      <div id="external-links" class="external-links" aria-label="Other games">
+        <a class="link-button" href="https://n0one123.github.io/Hangman-game" target="_blank" rel="noreferrer">Hangman</a>
+        <a class="link-button" href="https://n0one123.github.io/Maze" target="_blank" rel="noreferrer">Maze</a>
+      </div>
 
-	  <div id="external-links" class="external-links" aria-label="Other games">
-		<a class="link-button" href="https://n0one123.github.io/Hangman-game" target="_blank" rel="noreferrer">Hangman</a>
-		<a class="link-button" href="https://n0one123.github.io/Maze" target="_blank" rel="noreferrer">Maze</a>
-	  </div>
+      <section class="board" id="board" aria-label="Wordle board"></section>
 
+      <section class="keyboard" id="keyboard" aria-label="On-screen keyboard"></section>
+    </main>
 
-	  <section class="board" id="board" aria-label="Wordle board"></section>
-
-	  <section class="keyboard" id="keyboard" aria-label="On-screen keyboard"></section>
-	</main>
-
-	<script type="module" src="./game.js"></script>
+    <script type="module" src="./game.js"></script>
   </body>
 </html>
