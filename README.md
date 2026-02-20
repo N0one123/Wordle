@@ -1,11 +1,10 @@
 # Wordle Game
 This is an accurate representation of the popular Wordle game. 
 
-Currently on v0.9.0 Pre Release
+Currently on v0.9.1 Pre Release
 
-v0.9.0 Changelog
+v0.9.1 Changelog
 - New words for making guesses.
-- New smooth animations like tile flipping and button presses.
-- New Sounds for when you click, win or lose.
-- Option to start with a new game or with todays wordle. (The Wordle is not the same as the actual wordle answer)
+- New Info button
+- QoLs
 - Mobile optimizations.
