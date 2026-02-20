@@ -10,6 +10,13 @@ const statusEl = document.getElementById('status');
 const newGameButton = document.getElementById('new-game');
 const externalLinksEl = document.getElementById('external-links');
 const bodyEl = document.body;
+const infoToggleEl = document.getElementById('info-toggle');
+const infoPanelEl = document.getElementById('info-panel');
+const versionTextEl = document.getElementById('version-text');
+const reportFormEl = document.getElementById('report-form');
+
+const APP_VERSION = 'v0.9.1 - Pre-release';
+const GOOGLE_FORM_URL = 'https://forms.gle/RmGHU2tEytFcsca96';
 
 const keyboardLayout = [
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -51,7 +58,8 @@ function createNewState(answerOverride = getRandomAnswer()) {
     status: 'active',
     keyStates: {},
     developerMode: false,
-    developerAnswerRevealed: false
+    developerAnswerRevealed: false,
+    selectedRow: null
   };
 }
 
@@ -60,7 +68,16 @@ function buildBoard() {
   tiles = Array.from({ length: MAX_ROWS }, (_, rowIndex) => {
     const row = document.createElement('div');
     row.className = 'row';
+    row.dataset.rowIndex = String(rowIndex);
     row.setAttribute('aria-label', `Guess row ${rowIndex + 1}`);
+    row.addEventListener('click', () => {
+      if (!state.developerMode) {
+        return;
+      }
+      state.selectedRow = rowIndex;
+      setStatus(`Selected row ${rowIndex + 1} for removal.`);
+      render();
+    });
 
     const rowTiles = Array.from({ length: WORD_LENGTH }, (_, colIndex) => {
       const tile = document.createElement('div');
@@ -101,6 +118,11 @@ function buildKeyboard() {
 
 function render() {
   for (let row = 0; row < MAX_ROWS; row += 1) {
+    const rowEl = boardEl.querySelectorAll('.row')[row];
+    if (rowEl) {
+      rowEl.classList.toggle('selected-row', state.developerMode && state.selectedRow === row);
+    }
+
     for (let col = 0; col < WORD_LENGTH; col += 1) {
       const tile = tiles[row][col];
       const letter = state.guesses[row][col];
@@ -258,6 +280,11 @@ function ensureCheatPanel() {
     answerText.id = 'cheat-answer';
     answerText.style.marginBottom = '0.6rem';
 
+    const selectedRowText = document.createElement('div');
+    selectedRowText.id = 'cheat-selected-row';
+    selectedRowText.style.marginBottom = '0.55rem';
+    selectedRowText.style.fontSize = '0.85rem';
+
     const revealButton = document.createElement('button');
     revealButton.type = 'button';
     revealButton.id = 'cheat-reveal-btn';
@@ -268,6 +295,24 @@ function ensureCheatPanel() {
 
     revealButton.addEventListener('click', () => {
       state.developerAnswerRevealed = !state.developerAnswerRevealed;
+      render();
+    });
+
+    const randomWordButton = document.createElement('button');
+    randomWordButton.type = 'button';
+    randomWordButton.id = 'cheat-random-word-btn';
+    randomWordButton.textContent = 'Random word';
+    randomWordButton.style.marginRight = '0.45rem';
+    randomWordButton.style.padding = '0.35rem 0.55rem';
+    randomWordButton.style.background = '#44637a';
+
+    randomWordButton.addEventListener('click', () => {
+      const keepDeveloperMode = state.developerMode;
+      state = createNewState(getRandomAnswerWord());
+      state.developerMode = keepDeveloperMode;
+      state.developerAnswerRevealed = false;
+      state.selectedRow = null;
+      setStatus('Developer: started fresh random round.');
       render();
     });
 
@@ -282,7 +327,7 @@ function ensureCheatPanel() {
       removePreviousLine();
     });
 
-    panel.append(title, answerText, revealButton, removeLineButton);
+    panel.append(title, answerText, selectedRowText, revealButton, randomWordButton, removeLineButton);
     document.body.append(panel);
   }
 
@@ -290,17 +335,31 @@ function ensureCheatPanel() {
 }
 
 function removePreviousLine() {
-  if (state.currentRow <= 0) {
-    setStatus('No previous line to remove.');
+  const targetRow = Number.isInteger(state.selectedRow) ? state.selectedRow : state.currentRow - 1;
+
+  if (!Number.isInteger(targetRow) || targetRow < 0 || targetRow >= MAX_ROWS) {
+    setStatus('No valid row selected to remove.');
     return;
   }
 
-  const previousRow = state.currentRow - 1;
-  state.guesses[previousRow] = Array(WORD_LENGTH).fill('');
-  state.evaluations[previousRow] = Array(WORD_LENGTH).fill('empty');
-  state.currentRow = previousRow;
-  state.currentCol = 0;
-  setStatus('Previous line removed.');
+  const hasContent = state.guesses[targetRow].some((letter) => letter !== '')
+    || state.evaluations[targetRow].some((result) => result !== 'empty');
+
+  if (!hasContent) {
+    setStatus('Selected row is already empty.');
+    return;
+  }
+
+  state.guesses[targetRow] = Array(WORD_LENGTH).fill('');
+  state.evaluations[targetRow] = Array(WORD_LENGTH).fill('empty');
+
+  if (targetRow <= state.currentRow) {
+    state.currentRow = targetRow;
+    state.currentCol = 0;
+  }
+
+  state.selectedRow = null;
+  setStatus(`Row ${targetRow + 1} removed.`);
   render();
 }
 
@@ -308,6 +367,7 @@ function updateDeveloperVisuals() {
   const panel = ensureCheatPanel();
   const answerText = document.getElementById('cheat-answer');
   const revealButton = document.getElementById('cheat-reveal-btn');
+  const selectedRowText = document.getElementById('cheat-selected-row');
 
   if (state.developerMode) {
     panel.style.display = 'block';
@@ -315,6 +375,10 @@ function updateDeveloperVisuals() {
     if (externalLinksEl) {
       externalLinksEl.style.display = 'flex';
     }
+
+    selectedRowText.textContent = Number.isInteger(state.selectedRow)
+      ? `Selected row: ${state.selectedRow + 1}`
+      : 'Selected row: last used';
 
     if (state.developerAnswerRevealed) {
       answerText.textContent = `Answer: ${state.answer}`;
@@ -335,6 +399,7 @@ function updateDeveloperVisuals() {
 function toggleDeveloperMode() {
   state.developerMode = !state.developerMode;
   state.developerAnswerRevealed = false;
+  state.selectedRow = null;
 
   state.guesses[state.currentRow] = Array(WORD_LENGTH).fill('');
   state.evaluations[state.currentRow] = Array(WORD_LENGTH).fill('empty');
@@ -441,7 +506,8 @@ function loadPersistedState() {
       status: parsed.status,
       keyStates: parsed.keyStates || {},
       developerMode: Boolean(parsed.developerMode),
-      developerAnswerRevealed: Boolean(parsed.developerAnswerRevealed)
+      developerAnswerRevealed: Boolean(parsed.developerAnswerRevealed),
+      selectedRow: null
     };
   } catch {
     return null;
@@ -476,12 +542,41 @@ function startNewGame() {
   state = createNewState(selectedAnswer);
   state.developerMode = keepDeveloperMode;
   state.developerAnswerRevealed = false;
+  state.selectedRow = null;
   setStatus(
     normalizedChoice === 'NEW'
       ? 'New game started with a random word.'
       : "New game started with today's word."
   );
   render();
+}
+
+
+function setupInfoPanel() {
+  if (versionTextEl) {
+    versionTextEl.textContent = APP_VERSION;
+  }
+
+  if (infoToggleEl && infoPanelEl) {
+    infoToggleEl.addEventListener('click', () => {
+      infoPanelEl.classList.toggle('open');
+    });
+  }
+
+  if (reportFormEl) {
+    reportFormEl.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const confirmed = window.confirm(
+        'This is going to take you to a google form link. Your E-mail will not be recorded. Do you wish to continue?'
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      window.open(GOOGLE_FORM_URL, '_blank', 'noopener,noreferrer');
+    });
+  }
 }
 
 function init() {
@@ -496,6 +591,7 @@ function init() {
     setStatus('Guess the Wordle in 6 tries.');
   }
 
+  setupInfoPanel();
   newGameButton.addEventListener('click', startNewGame);
   document.addEventListener('keydown', onPhysicalKeydown);
 
